@@ -20,7 +20,11 @@ class ProcessQueue extends Command
     private static $parameters = [];
 
     public static $config;
+    
     public static $configName;
+
+    public static $workflowName;
+    
     public static $workflow;
     public static $conditions;
 
@@ -126,7 +130,7 @@ class ProcessQueue extends Command
         echo 'config => '.self::$configName.PHP_EOL;
         $configRendered = self::renderYaml('config.' . self::$configName);
         self::$config = $configRendered[self::$configName];
-        self::$workflow = self::renderYaml('workflow.' . self::$configName);
+        self::$workflow = self::renderYaml('workflow.' . self::$workflowName);
     }
 
     // verifica se o array possui uma key chamada if
