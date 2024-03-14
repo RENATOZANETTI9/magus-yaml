@@ -579,7 +579,8 @@ class ProcessQueue extends Command
          || (isset($action['events']) && isset($action['events']['success']) && $status!=null && $status=='200')
          ) {
             dump('$this->executeActions($action[config][events][success]);');
-            $this->executeActions($action['config']['events']['success']);
+            $actionSuccess  = isset($action['config']) ? $action['config']['events']['success'] : $action['events']['success'];
+            $this->executeActions($actionSuccess);
         }
     }
 
