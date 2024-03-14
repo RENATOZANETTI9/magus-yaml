@@ -28,6 +28,8 @@ class ProcessQueue extends Command
 
     public $actionList = [];
 
+    public static $processedConditions = [];
+
     public function __construct()
     {
         parent::__construct();
@@ -35,6 +37,7 @@ class ProcessQueue extends Command
     
     public function handle()
     {
+        self::$processedConditions = ProcessQueue::getConditions();
         // NÃO ESQUECER DE DECOMENTAR ***************************************************************************
         // Queue::where('flag_process', 0)
         //     ->orWhere(function ($query) {
@@ -612,10 +615,9 @@ class ProcessQueue extends Command
 
     public static function dumpComposer() {
         // Verifica se a aplicação está sendo executada no console e se o comando é 'process:queue'
-            
         View::composer(['*'], function ($view) {
+            $processedConditions = self::$processedConditions;
             // dump(ProcessQueue::$variables);
-            $processedConditions = ProcessQueue::getConditions();
             ProcessQueue::replacePlaceholdersWithValues($processedConditions);
             $view->with('var', function($key) {
                 return ProcessQueue::var($key);
@@ -823,7 +825,6 @@ class ProcessQueue extends Command
         // dd(self::$variables);
         // pega todas as keys do valor da coluna request e cria variáveis
         self::getParametersFromDB();
-        
         // *** verificar se o servidor web está iniciado se der erro ***
         
         // dd(self::$parameters);
