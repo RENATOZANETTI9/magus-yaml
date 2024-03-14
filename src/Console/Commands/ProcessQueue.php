@@ -707,8 +707,7 @@ class ProcessQueue extends Command
     }
 
     public static function toArray($string) {
-        if($string === 'null') return null;
-
+        if(empty($string)) return null;
         $result = json_decode($string, true);
         return $result;
     }
