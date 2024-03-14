@@ -627,7 +627,7 @@ class ProcessQueue extends Command
             $processedConditions = self::$processedConditions;
             // dump(ProcessQueue::$variables);
             ProcessQueue::replacePlaceholdersWithValues($processedConditions);
-            $view->with('this', ProcessQueue::class)
+            $view->with('self', ProcessQueue::class)
             ->with('var', function($key) {
                 return ProcessQueue::var($key);
             })->with('param', function($key) {
