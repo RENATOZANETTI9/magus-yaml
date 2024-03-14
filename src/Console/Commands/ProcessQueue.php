@@ -709,11 +709,8 @@ class ProcessQueue extends Command
     private static function parseArrayToVariables(Array $array)
     {
         array_walk_recursive($array, function (&$value, $key) {
-            // Define cada chave e valor como uma variável
-            // echo $key.PHP_EOL;
-            // if(is_string($key) && $key=='simulacao_fgts') {
-            //     dd('sucesso simulacao_fgts');
-            // }
+            $value = str_replace("\x00*\x00", "", $value);
+            $key = str_replace("\x00*\x00", "", $key);
             self::setVariable($key, $value);
         });
     }
