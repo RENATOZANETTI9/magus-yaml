@@ -112,7 +112,10 @@ class ProcessQueue extends Command
             $rendered = self::renderYaml($view);
         }
         dump('Final include------------------------------------------------------');
-        // caso seja passado apenas um arquivo, renderiza o mesmo
+       
+        // atualiza variáveis
+        self::parseArrayToVariables($rendered);
+
         dump('Final include array----------------------------------------------');
         return $rendered;
         // dump(self::$workflow);
