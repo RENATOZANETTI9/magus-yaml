@@ -533,7 +533,7 @@ class ProcessQueue extends Command
 
         // atualiza as variáveis com os valores do response
         $this->parseArrayToVariables((array)$response);
-
+        
         // verifica se existem eventos a executar
         $this->handleEvents($details);
 
@@ -571,7 +571,7 @@ class ProcessQueue extends Command
 
     private function handleEvents($action) {
         dump('antes findValueByKey');
-        $status = $this->findValueByKey($action, 'status');
+        $status = self::var('statusCode');
         dump("Response status =>  $status");
         dump('depois findValueByKey');
         // dump(self::$variables);
