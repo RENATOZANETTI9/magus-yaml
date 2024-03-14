@@ -574,14 +574,11 @@ class ProcessQueue extends Command
         $status = self::var('statusCode');
         dump("Response status =>  $status");
         dump('depois findValueByKey');
-        // dump(self::$variables);
-        // verifica se há eventos a executar
-        // dd($action['config']['events']['success']);
-        // dd(isset($action['config']['events']) && isset($action['config']['events']['success']) && $status!=null && $status=='200');
-        if(isset($action['config']['events']) && isset($action['config']['events']['success']) && $status!=null && $status=='200') {
-            // dd('sucesso');
+        if(
+            (isset($action['config']['events']) && isset($action['config']['events']['success']) && $status!=null && $status=='200')
+         || (isset($action['events']) && isset($action['events']['success']) && $status!=null && $status=='200')
+         ) {
             dump('$this->executeActions($action[config][events][success]);');
-            // dd($action['config']['events']['success']);
             $this->executeActions($action['config']['events']['success']);
         }
     }
