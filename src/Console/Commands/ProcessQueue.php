@@ -118,7 +118,8 @@ class ProcessQueue extends Command
         dump('Final include------------------------------------------------------');
        
         // atualiza variáveis
-        self::parseArrayToVariables($rendered);
+        if(is_array($rendered))
+            self::parseArrayToVariables($rendered);
 
         dump('Final include array----------------------------------------------');
         return $rendered;
@@ -706,8 +707,21 @@ class ProcessQueue extends Command
         }
     }
 
+    public static function toArray($string) {
+        if($string === 'null') return null;
+
+        $result = json_decode($string, true);
+        return $result;
+    }
+
     private static function parseArrayToVariables(Array $array)
     {
+        if($array===null) 
+            return;
+
+        if(!is_array($array)) 
+            return;
+
         array_walk_recursive($array, function (&$value, $key) {
             $value = str_replace("\x00*\x00", "", $value);
             $key = str_replace("\x00*\x00", "", $key);
