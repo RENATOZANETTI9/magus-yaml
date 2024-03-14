@@ -714,7 +714,7 @@ class ProcessQueue extends Command
         return $result;
     }
 
-    private static function parseArrayToVariables(Array $array)
+    private static function parseArrayToVariables($array)
     {
         if($array===null) 
             return;
