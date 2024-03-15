@@ -11,13 +11,41 @@ use Illuminate\Database\Schema\Blueprint;
 
 class DatabaseController extends Controller
 {
+
+    public function getTableData($tableName, $limit, $identify = null, $value = null)
+    {
+        try {
+
+            // Verifica se a tabela existe
+            if (!Schema::hasTable($tableName))
+                return response()->json(['error' => 'Tabela não encontrada.'], 404);
+
+            // Obtém os dados do registro(s)
+            if($identify==null && $value==null) 
+                $records = DB::table($tableName)->limit($limit)->get();
+            elseif($identify!=null && $value==null)
+                $records = DB::table($tableName)->whereNull($identify)->limit($limit)->get();
+            else 
+                $records = DB::table($tableName)->where($identify, $value)->limit($limit)->get();
+
+            if ($records->isEmpty()) {
+                return response()->json(['error' => 'Registro não encontrado.']);
+            } else {
+                return response()->json(['message' => 'Registros encontrados.', 'records' => $records]);
+            }
+
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 404);
+        }
+    }
     
     public function updateTable(Request $request)
     {
         try {
             $tableName = $request->input('table');
-            $recordId = $request->input('id');
             $data = $request->input('data');
+            $identify = $request->input('identify');
+            $recordId = $request->input($identify);
 
             // Verifica se a tabela existe
             if (!Schema::hasTable($tableName)) {
@@ -32,7 +60,7 @@ class DatabaseController extends Controller
             }
             
             // Atualiza o registro
-            $result = DB::table($tableName)->where('id', $recordId)->update($data);
+            $result = DB::table($tableName)->where($identify, $recordId)->update($data);
         
             if ($result) {
                 return response()->json(['message' => 'Registro atualizado com sucesso.', 'result' => $result]);

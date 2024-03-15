@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 // Database 
+Route::get('/get_table_data/{table}/{limit}/{identify?}/{value?}', [DatabaseController::class,'getTableData']);
 Route::post('/update_table', [DatabaseController::class, 'updateTable']);
 Route::post('/insert_table', [DatabaseController::class, 'insertTable']);
 Route::post('/create_or_update_table', [DatabaseController::class, 'createOrUpdateTable']);
