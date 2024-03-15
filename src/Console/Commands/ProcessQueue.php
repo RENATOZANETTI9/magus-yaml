@@ -800,6 +800,47 @@ class ProcessQueue extends Command
         return $value;
     }
 
+    public static function getPhoneToWhatsapp($phone) {
+		// Remover espaços, traços, parênteses e outros caracteres não numéricos
+		$phone = preg_replace('/\D/', '', $phone);
+	
+		// Remover o prefixo do país (55 para o Brasil) se estiver presente
+		if (substr($phone, 0, 2) == "55") {
+			$phone = substr($phone, 2);
+		}
+	
+		// Remover qualquer zero líder restante
+		$phone = ltrim($phone, '0');
+	
+		// Obter o DDD
+		$ddd = substr($phone, 0, 2);
+	
+		// Verificar se o DDD é menor ou igual a 28 (e retornar o número se for)
+		if ($ddd <= 28) {
+			return ltrim($phone,'0');
+		}
+	
+		// Remover o DDD do número e reconstruir o número de telefone
+		$newphone = $ddd . substr($phone, 3);
+	
+		// Verificar o comprimento do número
+		if (strlen($newphone) < 10) {
+			return $ddd . $newphone;
+		}
+	
+		return $newphone;
+	}
+    public static function clearString($str)
+    {
+        if(empty($str)) 
+            return $str;
+
+        $result =  preg_replace('/[^\p{L}\p{N}\s]/u', '', $str);
+        // Remove espaços em branco e caracteres especiais
+        return $result;
+    }
+
+
     // Função para obter uma variável
     public static function var($key, $returnFirst = true) {
         $found = []; // Armazena os valores encontrados
