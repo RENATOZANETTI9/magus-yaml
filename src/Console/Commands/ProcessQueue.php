@@ -739,6 +739,7 @@ class ProcessQueue extends Command
                 $value = json_decode($value, true);
 
             self::setVariable($key, $value);
+            
         });
     }
     
