@@ -736,7 +736,7 @@ class ProcessQueue extends Command
             $key = str_replace("\x00*\x00", "", $key);
 
             if (is_string($value) && is_array(json_decode($value, true)) && (json_last_error() == JSON_ERROR_NONE)) 
-                $dataArray = json_decode($value, true);
+                $value = json_decode($value, true);
 
             self::setVariable($key, $value);
         });
