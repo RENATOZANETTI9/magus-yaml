@@ -840,6 +840,16 @@ class ProcessQueue extends Command
         return $result;
     }
 
+    public static function split($str, $delimiter, $position)
+    {
+        $parts = explode($delimiter, $str);
+
+        if (isset($parts[$position])) {
+            return $parts[$position];
+        }
+
+        return null;
+    }
 
     // Função para obter uma variável
     public static function var($key, $returnFirst = true) {
