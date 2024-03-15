@@ -784,6 +784,22 @@ class ProcessQueue extends Command
         self::$parameters[$key] = $value;
     }
 
+    public static function varNested($path)
+    {
+        $parts = explode('.', $path);
+        $value = self::$variables;
+
+        foreach ($parts as $part) {
+            if (isset($value[$part])) {
+                $value = $value[$part];
+            } else {
+                return '';
+            }
+        }
+
+        return $value;
+    }
+
     // Função para obter uma variável
     public static function var($key, $returnFirst = true) {
         $found = []; // Armazena os valores encontrados
