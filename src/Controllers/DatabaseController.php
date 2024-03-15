@@ -11,6 +11,7 @@ use Illuminate\Database\Schema\Blueprint;
 
 class DatabaseController extends Controller
 {
+    
     public function updateTable(Request $request)
     {
         try {
@@ -46,57 +47,62 @@ class DatabaseController extends Controller
     public function createOrUpdateTable(Request $request)
     {
         try {
-
             $tableName = $request->input('table');
             $data = $request->input('data');
-
-
-            // Verifica a constraint antes de inserir
-            if (isset($request['condition_constraint'])) {
-                $condition = $request->input('condition_constraint');
-                if (DB::table($tableName)->whereRaw($condition)->exists()) {
-                    return response()->json(['error' => 'A condição da constraint é verdadeira. Não é possível inserir.'], 400);
-                }
-            }
-
+            $identify = $request->input('identify');
+    
             // Verifica se a tabela existe
             if (!Schema::hasTable($tableName)) {
                 return response()->json(['error' => 'Tabela não encontrada.'], 404);
             }
+    
+            foreach ($data[$tableName] as $item) {
 
-            // Remove as aspas dos valores numéricos
-            foreach ($data as $key => $value) {
-                if (is_numeric($value)) {
-                    $data[$key] = (int)$value;
+                // Remove as aspas dos valores numéricos
+                foreach ($item as $key => $value) {
+                    if (is_numeric($value)) {
+                        $item[$key] = (int) $value;
+                    }
+                }
+
+                // Converte arrays para JSON
+                $item = $this->convertArraysToJson($item);
+    
+                // Busca o registro pelo identify
+                $record = DB::table($tableName)->where($identify, $item[$identify])->first();
+    
+                if ($record) {
+                    // Se o registro existir, atualiza
+                    DB::table($tableName)->where($identify, $item[$identify])->update($item);
+                } else {
+                    // adiciona o header caso a coluna exista
+                    $this->setColumnToData($tableName, 'header', $item, json_encode($request->headers->all()));
+                    $this->setColumnToData($tableName, 'referer', $item, json_encode(request()->headers->get('referer')));
+                    $this->setColumnToData($tableName, 'request', $item, json_encode($request->all()));
+    
+                    // insere o registro
+                    DB::table($tableName)->insert($item);
                 }
             }
-            // Busca o registro pelo CPF
-            $record = DB::table($tableName)->where('cpf', $data['cpf'])->first();
-
-            if ($record) {
-                // Se o registro existir, atualiza
-                $result = DB::table($tableName)->where('cpf', $data['cpf'])->update($data);
-                $message = 'Registro atualizado com sucesso.';
-            } else {
-                // adiciona o header caso a coluna exista
-                $this->setColumnToData($tableName, 'header', $data, json_encode($request->headers->all()));
-                $this->setColumnToData($tableName, 'referer', $data, json_encode(request()->headers->get('referer')));
-                $this->setColumnToData($tableName, 'request', $data, json_encode($request->all()));
-
-                // insere o registro
-                $result = DB::table($tableName)->insert($data);
-                $message = 'Registro criado com sucesso.';
-            }
-
-            if ($result) {
-                return response()->json(['message' => $message, 'result' => $result]);
-            } else {
-                return response()->json(['error' => 'Falha ao atualizar/inserir o registro.']);
-            }
+    
+            return response()->json(['message' => 'Registros atualizados/inseridos com sucesso.']);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 404);
         }
     }
+    
+    public function convertArraysToJson($item)
+    {
+        foreach ($item as $key => $value) {
+            if (is_array($value)) {
+                // Se o valor for um array, converte para JSON
+                $item[$key] = json_encode($this->convertArraysToJson($value));
+            }
+        }
+
+        return $item;
+    }
+
 
     public function setColumnToData($tableName, $column, &$data, $value) {
         // Adiciona o header somente se a coluna existir
