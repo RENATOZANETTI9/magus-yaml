@@ -706,6 +706,17 @@ class ProcessQueue extends Command
         }
     }
 
+    public static function toYaml($array) {
+        if (!$array)
+            return '';
+    
+        if (!is_array($array))
+            $array = json_decode($array, true);
+    
+        $result = Yaml::dump($array, PHP_INT_MAX, 2);
+        return $result;
+    }
+
     public static function toArray($string) {
         if(empty($string)) return null;
         $result = json_decode($string, true);
