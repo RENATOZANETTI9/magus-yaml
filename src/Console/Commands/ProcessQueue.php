@@ -803,11 +803,14 @@ class ProcessQueue extends Command
     public static function getPhoneToWhatsapp($phone) {
 		// Remover espaços, traços, parênteses e outros caracteres não numéricos
 		$phone = preg_replace('/\D/', '', $phone);
+
+        if (substr($phone, 0, 3) === '+55') 
+            $phone = substr($phone, 3); // Retorna o restante do número sem o código do país
 	
-		// Remover o prefixo do país (55 para o Brasil) se estiver presente
-		if (substr($phone, 0, 2) == "55") {
-			$phone = substr($phone, 2);
-		}
+		// // Remover o prefixo do país (55 para o Brasil) se estiver presente
+		// if (substr($phone, 0, 2) == "55") {
+		// 	$phone = substr($phone, 2);
+		// }
 	
 		// Remover qualquer zero líder restante
 		$phone = ltrim($phone, '0');
