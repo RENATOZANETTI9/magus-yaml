@@ -190,6 +190,9 @@ class ProcessQueue extends Command
                 // renderiza a view para atualizar as viwes
                 $this->render();
 
+                // atualiza o action, pois pode estar desatualizado no loop
+                $action = $this->findArrayById(self::$workflow, $action['id']);
+
                 dump('switch ($action["type"])');
                 switch ($action['type']) {
                     case 'set_variable';
@@ -739,7 +742,7 @@ class ProcessQueue extends Command
                 $value = json_decode($value, true);
 
             self::setVariable($key, $value);
-            
+
         });
     }
     
